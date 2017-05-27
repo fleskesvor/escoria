@@ -2,6 +2,8 @@ tool
 
 extends Node2D
 
+export var global_id = "player"
+export var active = true setget set_active, get_active
 var task
 var walk_destination
 var animation
@@ -28,10 +30,14 @@ var sprites = []
 export var placeholders = {}
 
 func set_active(p_active):
+	active = p_active
 	if p_active:
 		show()
 	else:
 		hide()
+
+func get_active():
+	return active
 
 func walk_to(pos, context = null):
 	walk_path = terrain.get_path(get_pos(), pos)
@@ -307,6 +313,7 @@ func _find_sprites(p = null):
 		_find_sprites(p.get_child(i))
 
 func _ready():
+	add_to_group("players")
 
 	terrain = get_parent().get_node("terrain")
 	_find_sprites(self)
@@ -315,7 +322,7 @@ func _ready():
 
 	animation = get_node("animation")
 	vm = get_tree().get_root().get_node("vm")
-	vm.register_object("player", self)
+	vm.register_object(global_id, self)
 	#_update_terrain();
 	if has_node("animation"):
 		get_node("animation").connect("finished", self, "anim_finished")
