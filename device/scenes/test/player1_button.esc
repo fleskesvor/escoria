@@ -1,0 +1,4 @@
+:use
+
+say player "Player1's turn!"
+set_player player

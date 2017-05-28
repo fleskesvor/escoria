@@ -1,6 +1,6 @@
 var vm
 
-var player
+#var player
 var mode = "default"
 var action_menu = null
 var inventory
@@ -20,6 +20,11 @@ var click_anim
 
 var camera
 export var camera_limits = Rect2()
+
+func get_player():
+	for player in get_tree().get_nodes_in_group("players"):
+		if player.is_current():
+			return player
 
 func set_mode(p_mode):
 	mode = p_mode
@@ -66,6 +71,8 @@ func set_current_tool(p_tool):
 	current_tool = p_tool
 
 func clicked(obj, pos):
+	var player = get_player()
+	printt("clicked", obj.get_name(), player.get_name(), mode)
 	# If multiple areas are clicked at once, an item_background "wins"
 	if obj.get_type() == "Area2D":
 		for area in obj.get_overlapping_areas():
@@ -75,6 +82,7 @@ func clicked(obj, pos):
 	if !vm.can_interact():
 		return
 	if player == null:
+		# TODO: Figure out what this did when player variable was global
 		player = self
 	if mode == "default":
 		var action = obj.get_action()
@@ -124,6 +132,7 @@ func spawn_action_menu(obj):
 	#obj.grab_focus()
 
 func action_menu_selected(obj, action):
+	var player = get_player()
 	if action == "use" && obj.get_action() != "":
 		action = obj.get_action()
 	if player != null:
@@ -207,6 +216,8 @@ func _process(time):
 	if !vm.can_interact():
 		check_joystick = false
 		return
+
+	var player = get_player()
 
 	if player == null || player == self:
 		return
@@ -315,11 +326,6 @@ func load_hud():
 func _ready():
 	add_to_group("game")
 	vm = get_tree().get_root().get_node("vm")
-
-	for p in get_tree().get_nodes_in_group("players"):
-		if p.get_active():
-			player = p
-			break
 
 	if has_node("action_menu"):
 		action_menu = get_node("action_menu")

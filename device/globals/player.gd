@@ -2,8 +2,9 @@ tool
 
 extends Node2D
 
+# TODO: Add tooltip, action, etc. and behave as item when not selected
 export var global_id = "player"
-export var active = true setget set_active, get_active
+export var current = true setget set_current, is_current
 var task
 var walk_destination
 var animation
@@ -29,15 +30,12 @@ var anim_scale_override = null
 var sprites = []
 export var placeholders = {}
 
-func set_active(p_active):
-	active = p_active
-	if p_active:
-		show()
-	else:
-		hide()
+func set_current(p_current):
+	# TODO: Add logic for stashing/loading inventory per player
+	current = p_current
 
-func get_active():
-	return active
+func is_current():
+	return current
 
 func walk_to(pos, context = null):
 	walk_path = terrain.get_path(get_pos(), pos)

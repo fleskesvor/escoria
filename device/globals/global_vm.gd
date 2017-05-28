@@ -148,7 +148,7 @@ func update_camera(time):
 		return
 	var target = cam_target
 	if target == null:
-		target = get_object("player")
+		target = get_player()
 
 	if target == null:
 		target = Vector2(0, 0)
@@ -590,6 +590,7 @@ func save():
 
 	ret.append("change_scene " + root.get_current_scene().get_filename() + "\n")
 
+	# TODO: Save position of actual current player, regardless of node name.
 	if root.get_current_scene().has_node("player"):
 		var pos = root.get_current_scene().get_node("player").get_global_pos()
 		ret.append("teleport_pos player " + str(pos.x) + " " + str(pos.y) + "\n")
@@ -644,6 +645,15 @@ func game_over(p_enable_continue, p_show_credits, context):
 	change_scene(["res://globals/scene_main.scn"], context)
 	if p_show_credits:
 		root.get_current_scene().show_credits()
+
+func set_player(p_player):
+	for player in get_tree().get_nodes_in_group("players"):
+		player.set_current(player.global_id == p_player)
+
+func get_player():
+	for player in get_tree().get_nodes_in_group("players"):
+		if player.is_current():
+			return player
 
 func focus_out():
 	AudioServer.set_fx_global_volume_scale(0)
