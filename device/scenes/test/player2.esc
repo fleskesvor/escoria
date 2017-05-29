@@ -1,3 +1,9 @@
 :look
 
 say player "That's Player 2!"
+
+:use
+
+say player "Your turn, Player 2!"
+set_player player2
+

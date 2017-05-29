@@ -1,4 +1,0 @@
-:use
-
-say player2 "Player2's turn!"
-set_player player2
