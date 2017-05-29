@@ -1,34 +1,14 @@
 tool
 
-extends Node2D
+extends "res://globals/item.gd"
 
-# TODO: Add tooltip, action, etc. and behave as item when not selected
-export var global_id = "player"
-export var current = true setget set_current, is_current
-var task
-var walk_destination
-var animation
-var vm
-var terrain
-var walk_path
-var walk_context
-var path_ofs
-export var speed = 300
 export var v_speed_damp = 1.0
-export(Script) var animations
-var last_dir = 0
-var last_scale
-var pose_scale = 1
 var params_queue
 var camera
 export var camera_limits = Rect2()
 
 export var telekinetic = false
-
-var anim_notify = null
-var anim_scale_override = null
-var sprites = []
-export var placeholders = {}
+export var current = true setget set_current, is_current
 
 func set_current(p_current):
 	# TODO: Add logic for stashing/loading inventory per player
@@ -36,6 +16,12 @@ func set_current(p_current):
 
 func is_current():
 	return current
+
+func set_active(p_active):
+	if p_active:
+		show()
+	else:
+		hide()
 
 func walk_to(pos, context = null):
 	walk_path = terrain.get_path(get_pos(), pos)
@@ -91,18 +77,6 @@ func _find(p_val, p_array, p_flip):
 
 		i += 1
 	return -1
-
-func anim_get_ph_paths(p_anim):
-	if !(p_anim in placeholders):
-		return null
-
-	var ret = []
-	for p in placeholders[p_anim]:
-		var n = get_node(p)
-		if !(n extends InstancePlaceholder):
-			continue
-		ret.push_back(n.get_instance_path())
-	return ret
 
 func play_anim(p_anim, p_notify = null, p_reverse = false, p_flip = null):
 	if typeof(p_notify) != typeof(null) && (!has_node("animation") || !get_node("animation").has_animation(p_anim)):
