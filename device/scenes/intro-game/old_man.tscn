@@ -74,7 +74,7 @@ global_id = "old_man"
 use_combine = false
 inventory = false
 use_action_menu = true
-interact_angle = -1
+interact_angle = 90
 talk_animation = "talk"
 active = true
 placeholders = {
@@ -115,6 +115,7 @@ playback/active = true
 playback/speed = 1.0
 blend_times = [  ]
 autoplay = "default"
+_sections_unfolded = [ "Playback Options", "playback" ]
 
 [node name="AnimatedSprite" type="AnimatedSprite" parent="."]
 
