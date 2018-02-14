@@ -25,7 +25,6 @@ application/speech_suffix=".spx"
 application/tooltip_lang_default="en"
 
 ; debug
-print_clicked_control=true
 screen_size_override=false
 
 ; display
