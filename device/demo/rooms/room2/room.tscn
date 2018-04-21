@@ -1,0 +1,99 @@
+[gd_scene load_steps=9 format=2]
+
+[ext_resource path="res://globals/scene.gd" type="Script" id=1]
+[ext_resource path="res://globals/terrain.gd" type="Script" id=2]
+[ext_resource path="res://demo/actors/player/player.tscn" type="PackedScene" id=3]
+[ext_resource path="res://demo/rooms/room2/background.png" type="Texture" id=4]
+[ext_resource path="res://demo/rooms/room2/foreground.png" type="Texture" id=5]
+[ext_resource path="res://globals/background_area.gd" type="Script" id=6]
+[ext_resource path="res://globals/game.tscn" type="PackedScene" id=7]
+
+[sub_resource type="NavigationPolygon" id=1]
+
+vertices = PoolVector2Array( 773.554, 559.179, 1204.89, 557.953, 1491.17, 617.027, 1491.17, 657.925, 1112.47, 689.271, 705.031, 687.462, 158.201, 587.028, 414.945, 555.219, 350.588, 673.829, 159.734, 646.564 )
+polygons = [ PoolIntArray( 0, 1, 2, 3, 4, 5 ), PoolIntArray( 6, 7, 0, 5, 8, 9 ) ]
+outlines = [ PoolVector2Array( 414.945, 555.219, 773.554, 559.179, 1204.89, 557.953, 1491.17, 617.027, 1491.17, 657.925, 1112.47, 689.271, 705.031, 687.462, 350.588, 673.829, 159.734, 646.564, 158.201, 587.028 ) ]
+
+[node name="scene" type="Node2D" index="0"]
+
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_lock_": true
+}
+events_path = ""
+
+[node name="terrain" type="Navigation2D" parent="." index="0"]
+
+position = Vector2( -65.0709, 373.302 )
+script = ExtResource( 2 )
+_sections_unfolded = [ "Transform", "Z" ]
+scales = null
+lightmap = null
+bitmaps_scale = Vector2( 2, 1 )
+debug_mode = 1
+lightmap_modulate = Color( 1, 1, 1, 1 )
+scale_min = 0.5
+scale_max = 1.0
+player_speed_multiplier = 1.0
+player_doubleclick_speed_multiplier = 1.5
+
+[node name="NavigationPolygonInstance" type="NavigationPolygonInstance" parent="terrain" index="0"]
+
+position = Vector2( -272.478, -710.552 )
+scale = Vector2( 2.21144, 2.55571 )
+navpoly = SubResource( 1 )
+enabled = true
+
+[node name="player" parent="." index="1" instance=ExtResource( 3 )]
+
+position = Vector2( 1314.51, 1255.97 )
+z_index = 1255
+_sections_unfolded = [ "Transform" ]
+dialog_color = null
+placeholders = {
+
+}
+
+[node name="parallax" type="ParallaxBackground" parent="." index="2"]
+
+layer = -1
+offset = Vector2( 0, 0 )
+rotation = 0.0
+scale = Vector2( 1, 1 )
+transform = Transform2D( 1, 0, 0, 1, 0, 0 )
+scroll_offset = Vector2( 0, 0 )
+scroll_base_offset = Vector2( 0, 0 )
+scroll_base_scale = Vector2( 1, 1 )
+scroll_limit_begin = Vector2( 0, 0 )
+scroll_limit_end = Vector2( 0, 0 )
+scroll_ignore_camera_zoom = false
+_sections_unfolded = [ "Scroll" ]
+
+[node name="ParallaxLayer" type="ParallaxLayer" parent="parallax" index="0"]
+
+motion_scale = Vector2( 0.1, 0.1 )
+motion_offset = Vector2( 0, 0 )
+motion_mirroring = Vector2( 0, 0 )
+_sections_unfolded = [ "Motion", "Transform" ]
+
+[node name="Sprite" type="Sprite" parent="parallax/ParallaxLayer" index="0"]
+
+texture = ExtResource( 4 )
+centered = false
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="background" type="Sprite" parent="." index="3"]
+
+texture = ExtResource( 5 )
+centered = false
+script = ExtResource( 6 )
+__meta__ = {
+"_edit_lock_": true
+}
+action = "walk"
+
+[node name="game" parent="." index="4" instance=ExtResource( 7 )]
+
+
