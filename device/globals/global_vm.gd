@@ -119,62 +119,6 @@ func hover_begin(obj):
 func hover_end():
 	hover_object = null
 
-func update_camera(time):
-	if camera == null:
-		return
-	var target = cam_target
-	if target == null:
-		target = get_object("player")
-
-	if target == null:
-		target = Vector2(0, 0)
-
-	var pos
-	if typeof(target) == typeof(Vector2()):
-		pos = target
-	elif typeof(target) == typeof([]):
-		var count = 0
-		pos = Vector2()
-		for n in target:
-			var obj = get_object(n)
-			if obj != null:
-				count += 1
-				pos += obj.get_position()
-		if count > 0:
-			pos = pos / count
-	else:
-		pos = target.get_position()
-
-	var cpos = camera.get_position()
-
-	# The camera position is set to target when it's about to overstep it,
-	# or when it's moved there instantly.
-	# Compare the camera and target position until then
-	if cpos != pos:
-		var v = pos - cpos  # vector to move along
-		var step = cam_speed * time  # pixel size of step to move
-
-		# This is where we may overstep or move instantly
-		if step > v.length() || cam_speed == 0:
-			camera.set_position(pos)
-		else:
-			pos = cpos + v.normalized() * step
-			camera.set_position(pos)
-
-	var half = game_size / 2
-
-	var clamp_data = _clamp_camera(pos, half)
-	var camera_clamped = clamp_data[0]
-	pos = clamp_data[1]
-
-	var t = Transform2D()
-	t.origin = half - pos
-
-	if camera_clamped:
-		camera.set_position(pos)
-
-	get_node("/root").canvas_transform = t
-
 func camera_set_zoom_height(zoom_height):
 	var scale = game_size.y / zoom_height
 	camera_zoom_in(scale)
@@ -183,34 +127,14 @@ func camera_zoom_in(magnitude):
 	var current_scene = main.get_current_scene()
 	if current_scene and current_scene is preload("res://globals/scene.gd"):
 		# Save current state so that we can reset zoom
-		_zoom_stack.append({"scale": current_scene.scale})
-		current_scene.scale *= Vector2(magnitude, magnitude)
+		_zoom_stack.append({"scale": camera.zoom})
+		camera.zoom = Vector2(1 / magnitude, 1/ magnitude)
 
 func camera_zoom_out():
 	var current_scene = main.get_current_scene()
 	var prev_state = _zoom_stack.pop_back()
 	if current_scene and current_scene is preload("res://globals/scene.gd") and prev_state:
 		current_scene.scale = prev_state["scale"]
-
-func _clamp_camera(pos, half):
-	# Helper function clamps camera within the given camera limits; if we try
-	# to show anything outside the limits, we return a position that doesn't break the limits.
-	# `half` is passed in because there's a good chance it gets altered when zoomed in
-	# Returns whether or not the camera was clamped and what the new position is regardless
-
-	var orig_pos = pos
-
-	if pos.x + half.x > camera_limits.position.x + camera_limits.size.x:
-		pos.x = (camera_limits.position.x + camera_limits.size.x) - half.x
-	if pos.x - half.x < camera_limits.position.x:
-		pos.x = camera_limits.position.x + half.x
-
-	if pos.y + half.y > camera_limits.position.y + camera_limits.size.y:
-		pos.y = (camera_limits.position.y + camera_limits.size.y) - half.y
-	if pos.y - half.y < camera_limits.position.y:
-		pos.y = camera_limits.position.y + half.y
-
-	return [orig_pos != pos, pos]
 
 func set_cam_limits(limits):
 	camera_limits = limits
@@ -450,7 +374,6 @@ func _process(time):
 	check_event_queue(time)
 	run()
 	check_autosave()
-	update_camera(time)
 
 func run_top():
 	var top = stack[stack.size()-1]
@@ -521,7 +444,6 @@ func change_scene(params, context):
 	if context != null:
 		context.waiting = false
 
-	camera_set_target(0, null)
 	autosave_pending = true
 
 func spawn(params):
@@ -696,6 +618,7 @@ func save():
 func set_camera(p_cam):
 	camera = p_cam
 	camera.clear_current()
+	camera.current = true
 
 func clear():
 	get_tree().call_group_flags(SceneTree.GROUP_CALL_DEFAULT, "game", "game_cleared")

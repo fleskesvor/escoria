@@ -114,7 +114,8 @@ func check_screen():
 
 
 func _process(time):
-	check_screen()
+	#check_screen()
+	pass
 
 func _input(event):
 	# CTRL+F12

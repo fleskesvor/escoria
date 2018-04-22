@@ -18,7 +18,6 @@ var current_tool = null
 var click
 var click_anim
 
-var camera
 export var camera_limits = Rect2()
 
 var tooltip
@@ -194,7 +193,7 @@ func spawn_action_menu(obj):
 		player.walk_stop(player.position)
 
 	var pos = get_viewport().get_mouse_position()
-	var am_pos = action_menu.check_clamp(pos, camera)
+	var am_pos = action_menu.check_clamp(pos, vm.camera)
 	action_menu.set_position(am_pos)
 	action_menu.show()
 	action_menu.start(obj)
@@ -355,48 +354,6 @@ func set_inventory_enabled(p_enabled):
 	else:
 		get_node("hud_layer/hud/inv_toggle").hide()
 
-func set_camera_limits():
-	var cam_limit = camera_limits
-	if camera_limits.size.x == 0 && camera_limits.size.y == 0:
-		var p = get_parent()
-		var area = Rect2()
-		for i in range(0, p.get_child_count()):
-			var c = p.get_child(i)
-			if c is preload("res://globals/background.gd"):
-				var pos = c.get_global_position()
-				var size = c.get_size()
-				area = area.expand(pos)
-				area = area.expand(pos + size)
-			if c is preload("res://globals/background_area.gd"):
-				var pos = c.get_global_position()
-				var size = c.get_texture().get_size()
-				area = area.expand(pos)
-				area = area.expand(pos + size)
-
-		camera.limit_left = area.position.x
-		camera.limit_right = area.position.x + area.size.x
-		var cam_top = area.position.y # - main.screen_ofs.y
-		camera.limit_top = cam_top
-		camera.limit_top = cam_top + area.size.y + main.screen_ofs.y * 2
-
-		if area.size.x == 0 || area.size.y == 0:
-			printt("No limit area! Using viewport")
-			area.size = get_viewport().size
-
-		printt("setting camera limits from scene ", area)
-		cam_limit = area
-	else:
-		camera.limit_left = camera_limits.position.x
-		camera.limit_right = camera_limits.position.x + camera_limits.size.x
-		camera.limit_top = camera_limits.position.y
-		camera.limit_bottom = camera_limits.position.y + camera_limits.size.y + main.screen_ofs.y * 2
-		printt("setting camera limits from parameter ", camera_limits)
-
-	camera.set_offset(main.screen_ofs * 2)
-	vm.set_cam_limits(cam_limit)
-
-	#vm.update_camera(0.000000001)
-
 func load_hud():
 	var hres = vm.res_cache.get_resource(vm.get_hud_scene())
 	get_node("hud_layer/hud").replace_by_instance(hres)
@@ -435,10 +392,5 @@ func _ready():
 	if has_node("click_anim"):
 		click_anim = get_node("click_anim")
 
-	camera = get_node("camera")
-
-	vm.set_camera(camera)
-
-	call_deferred("set_camera_limits")
 	call_deferred("load_hud")
 
