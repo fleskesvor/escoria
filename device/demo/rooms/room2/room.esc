@@ -1,0 +1,9 @@
+:ready
+camera_set_target 0 player
+wait 0.1
+camera_set_target 500 helga
+wait 1.5
+camera_set_target 500 player
+wait 1.5
+say player player_room002_sees_helga:"Ooh, Helga is by the bridge!"
+set_global room.002.inited true
